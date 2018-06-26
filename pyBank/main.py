@@ -18,6 +18,9 @@ last = 0
 largestp = ["month", 0]
 largestl = ["month", 0]
 
+# set variable to store previous month's profits/losses
+prev = 0
+
 with open(budgetData, 'r') as csvfile:
 
     # Split the data on commas
@@ -25,22 +28,47 @@ with open(budgetData, 'r') as csvfile:
 
     header = next(csvreader)
     for row in csvreader:
+        # set variable for profits/losses
         rev = int(row[1])
+        # add each month to a list
         months.append(row[0])
+        # add each month's profit/loss to a list
         profits.append(rev)
-        if rev > largestp[1]:
+        # if the increase in profits of this month are larger than largestp set new values for largestp
+        if rev-prev > largestp[1]:
             largestp[0] = row[0]
-            largestp[1] = rev
-        if rev < largestl[1]:
+            largestp[1] = rev-prev
+        # if the decrease in profits of this month are larger than largestl set new values for largestl 
+        if prev-rev > largestl[1]:
             largestl[0] = row[0]
-            largestl[1] = rev
+            largestl[1] = prev-rev
+        # set new value for prev
+        prev = rev
+    # count number of months
     amount = int(len(months))
+    # the 1st month's profits
     first = profits[0]
+    # last month's profits
     last = profits[amount-1]
+    # sum all profits
     total = sum(profits)
+    # calculate average month to month change
     change = round((last-first)/(amount-1),2)
-    print(amount)
-    print(total)
-    print(change)
-    print(largestp)
-    print(largestl)
+
+    print("Financial Analysis")
+    print("------------------------------")
+    print(f"Total Months: {amount}")
+    print(f"Total Profit/Losses: ${total}")
+    print(f"Average Change: ${change}")
+    print(f"Greatest Increase in Profits: {largestp[0]} (${largestp[1]})")
+    print(f"Greatest Decrease in Profits: {largestl[0]} ($-{largestl[1]})")
+
+    f = open('main.txt','a')
+    f.write("\n" + "Financial Analysis")
+    f.write("\n" + "------------------------------")
+    f.write('\n' + f"Total Months: {amount}")
+    f.write('\n' + f"Total Profit/Losses: ${total}")
+    f.write('\n' + f"Average Change: ${change}")
+    f.write('\n' + f"Greatest Increase in Profits: {largestp[0]} (${largestp[1]})")
+    f.write('\n' + f"Greatest Decrease in Profits: {largestl[0]} (${largestl[1]})")
+    f.close()
