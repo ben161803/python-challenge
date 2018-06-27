@@ -18,9 +18,6 @@ last = 0
 largestp = ["month", 0]
 largestl = ["month", 0]
 
-# set variable to store previous month's profits/losses
-prev = 0
-
 with open(budgetData, 'r') as csvfile:
 
     # Split the data on commas
@@ -34,16 +31,14 @@ with open(budgetData, 'r') as csvfile:
         months.append(row[0])
         # add each month's profit/loss to a list
         profits.append(rev)
-        # if the increase in profits of this month are larger than largestp set new values for largestp
-        if rev-prev > largestp[1]:
+        # if the profits of this month are larger than largestp set new values for largestp
+        if rev > largestp[1]:
             largestp[0] = row[0]
-            largestp[1] = rev-prev
-        # if the decrease in profits of this month are larger than largestl set new values for largestl 
-        if prev-rev > largestl[1]:
+            largestp[1] = rev
+        # if the losses of this month are greater than largestl set new values for largestl 
+        if rev < largestl[1]:
             largestl[0] = row[0]
-            largestl[1] = prev-rev
-        # set new value for prev
-        prev = rev
+            largestl[1] = rev
     # count number of months
     amount = int(len(months))
     # the 1st month's profits
@@ -61,7 +56,7 @@ with open(budgetData, 'r') as csvfile:
     print(f"Total Profit/Losses: ${total}")
     print(f"Average Change: ${change}")
     print(f"Greatest Increase in Profits: {largestp[0]} (${largestp[1]})")
-    print(f"Greatest Decrease in Profits: {largestl[0]} ($-{largestl[1]})")
+    print(f"Greatest Decrease in Profits: {largestl[0]} (${largestl[1]})")
 
     f = open('main.txt','a')
     f.write("\n" + "Financial Analysis")
